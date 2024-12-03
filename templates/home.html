@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная страница</title>
+    <style>
+        /* Общие стили */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        h1, h2 {
+            color: #4a90e2;
+        }
+
+        h1 {
+            font-size: 3em;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 1.8em;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        /* Основной контейнер */
+        .container {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 800px;
+        }
+
+        /* Стили для входа и выхода */
+        .auth {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .auth p {
+            font-size: 1.2em;
+            color: #333;
+        }
+
+        .auth a {
+            color: #4a90e2;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 0 10px;
+            transition: color 0.3s ease;
+        }
+
+        .auth a:hover {
+            color: #357abd;
+        }
+
+        /* Список ссылок на таблицы */
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        ul li {
+            margin-bottom: 10px;
+        }
+
+        ul li a {
+            text-decoration: none;
+            color: #4a90e2;
+            font-size: 1.2em;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        ul li a:hover {
+            color: #357abd;
+        }
+
+        /* SQL-форма */
+        form {
+            margin-top: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            resize: vertical;
+            font-size: 1em;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            background-color: #4a90e2;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #357abd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Добро пожаловать на платформу Airbnb!</h1>
+
+        <div class="auth">
+            {% if 'user_id' in session %}
+                <p>Вы вошли как <strong>{{ session['user_name'] }}</strong></p>
+                <a href="{{ url_for('logout') }}">Выйти</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">Войти</a> | 
+                <a href="{{ url_for('register') }}">Регистрация</a>
+            {% endif %}
+        </div>
+
+        <h2>Просмотр таблиц</h2>
+        <ul>
+            <li><a href="{{ url_for('show_table', table_name='users') }}">Пользователи</a></li>
+            <li><a href="{{ url_for('show_table', table_name='rooms') }}">Недвижимость</a></li>
+            <li><a href="{{ url_for('show_table', table_name='reservations') }}">Бронирования</a></li>
+        </ul>
+
+        <h2>Выполнение SQL-запросов</h2>
+        <form method="POST" action="{{ url_for('execute_query') }}">
+            <label for="query">Введите SQL запрос:</label>
+            <textarea id="query" name="query" rows="4"></textarea>
+            <button type="submit">Выполнить</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Таблица: {{ table_name }}</title>
+    <style>
+        /* Общие стили */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #4a90e2;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        /* Таблица */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 800px;
+            margin: 20px 0;
+            background: #ffffff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        table thead {
+            background-color: #4a90e2;
+            color: white;
+        }
+
+        table th, table td {
+            text-align: left;
+            padding: 12px;
+            border: 1px solid #ddd;
+        }
+
+        table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        table tr:hover {
+            background-color: #e6f7ff;
+        }
+
+        table th {
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        /* Ссылки */
+        a {
+            color: #4a90e2;
+            text-decoration: none;
+            font-size: 1em;
+            margin-top: 15px;
+            display: inline-block;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: #357abd;
+        }
+
+        /* Контейнер */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Таблица: {{ table_name }}</h1>
+        
+        <table>
+            <thead>
+                <tr>
+                    {% for column in columns %}
+                        <th>{{ column }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                    <tr>
+                        {% for value in row %}
+                            <td>{{ value }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <a href="{{ url_for('home') }}">Назад на главную</a>
+    </div>
+</body>
+</html>

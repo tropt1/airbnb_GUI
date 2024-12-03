@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: airbnb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345
+    volumes:
+      - ./airbnb.sql:/docker-entrypoint-initdb.d/airbnb.sql
+    ports:
+      - "5432:5432"
+
+  web:
+    build: .
+    command: python app.py
+    depends_on:
+      - db
+    ports:
+      - "5000:5000"
