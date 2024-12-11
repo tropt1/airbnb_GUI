@@ -5,83 +5,95 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Регистрация</title>
     <style>
-        /* Общие стили */
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #2c3e50, #bdc3c7);
+            color: #fff;
             margin: 0;
             padding: 0;
-            background-color: #f5f7fa;
-            color: #333;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
         }
 
         h1 {
-            color: #4a90e2;
-            font-size: 2.5em;
-            text-align: center;
             margin-bottom: 20px;
+            font-size: 24px;
         }
 
-        /* Основной контейнер */
-        .container {
-            background: #ffffff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            width: 90%;
-            max-width: 400px;
-            text-align: center;
+        form {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 30px;
         }
 
         label {
-            font-size: 1em;
             font-weight: bold;
-            margin-top: 10px;
-            display: block;
             text-align: left;
+            margin-bottom: 5px;
         }
 
         input {
-            width: 100%;
+            margin-bottom: 15px;
             padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
+            border: none;
             border-radius: 5px;
-            font-size: 1em;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            font-size: 14px;
         }
 
         button {
-            background-color: #4a90e2;
-            color: #ffffff;
+            background-color: #3498db;
+            color: white;
+            font-size: 16px;
+            padding: 10px;
             border: none;
-            padding: 10px 20px;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 1em;
-            margin-top: 15px;
-            width: 100%;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s;
         }
 
         button:hover {
-            background-color: #357abd;
+            background-color: #2980b9;
         }
 
         a {
-            color: #4a90e2;
+            color: #3498db;
             text-decoration: none;
-            font-size: 0.9em;
             margin-top: 15px;
             display: inline-block;
-            transition: color 0.3s ease;
+            transition: color 0.3s;
         }
 
         a:hover {
-            color: #357abd;
+            color: #1abc9c;
+        }
+
+        .home-btn {
+            margin-top: 20px;
+            background-color: #95a5a6;
+            color: white;
+            padding: 8px 15px;
+            font-size: 14px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+
+        .home-btn:hover {
+            background-color: #7f8c8d;
         }
     </style>
 </head>
@@ -100,7 +112,10 @@
 
             <button type="submit">Зарегистрироваться</button>
         </form>
+
         <a href="{{ url_for('login') }}">Уже есть аккаунт? Войти</a>
+        
+        <button class="home-btn" onclick="window.location.href='{{ url_for('home') }}'">На главную страницу</button>
     </div>
 </body>
 </html>

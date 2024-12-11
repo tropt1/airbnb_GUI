@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Вход</title>
+    <title>Вход для администратора</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -97,18 +97,16 @@
 </head>
 <body>
     <div class="container">
-        <h1>Вход</h1>
-        <form method="POST" action="{{ url_for('login') }}">
-            <label for="email">Электронная почта:</label>
-            <input type="email" id="email" name="email" placeholder="Введите вашу почту" required>
+        <h1>Вход для администратора</h1>
+        <form method="POST" action="{{ url_for('admin_login') }}">
+            <label for="username">Имя пользователя:</label>
+            <input type="text" id="username" name="username" required placeholder="Введите имя пользователя">
 
             <label for="password">Пароль:</label>
-            <input type="password" id="password" name="password" placeholder="Введите ваш пароль" required>
+            <input type="password" id="password" name="password" required placeholder="Введите пароль">
 
             <button type="submit">Войти</button>
         </form>
-        
-        <a href="{{ url_for('register') }}">Нет аккаунта? Зарегистрироваться</a>
         
         <button class="home-btn" onclick="window.location.href='{{ url_for('home') }}'">На главную страницу</button>
     </div>

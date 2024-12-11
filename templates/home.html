@@ -5,156 +5,94 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Главная страница</title>
     <style>
-        /* Общие стили */
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #2c3e50, #bdc3c7);
+            color: #fff;
             margin: 0;
             padding: 0;
-            background-color: #f5f7fa;
-            color: #333;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
             min-height: 100vh;
         }
 
-        h1, h2 {
-            color: #4a90e2;
+        .container {
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            width: 90%;
+            max-width: 600px;
         }
 
         h1 {
-            font-size: 3em;
-            text-align: center;
             margin-bottom: 20px;
+            font-size: 28px;
         }
 
-        h2 {
-            font-size: 1.8em;
-            margin-top: 30px;
-            margin-bottom: 15px;
+        p {
+            margin: 15px 0;
         }
 
-        /* Основной контейнер */
-        .container {
-            background: #ffffff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            width: 90%;
-            max-width: 800px;
-        }
-
-        /* Стили для входа и выхода */
-        .auth {
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .auth p {
-            font-size: 1.2em;
-            color: #333;
-        }
-
-        .auth a {
-            color: #4a90e2;
+        a, button {
+            display: inline-block;
+            margin: 10px 5px;
+            padding: 10px 20px;
+            color: #fff;
+            background-color: #3498db;
+            border: none;
+            border-radius: 5px;
             text-decoration: none;
-            font-weight: bold;
-            margin: 0 10px;
-            transition: color 0.3s ease;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
 
-        .auth a:hover {
-            color: #357abd;
+        a:hover, button:hover {
+            background-color: #2980b9;
         }
 
-        /* Список ссылок на таблицы */
         ul {
             list-style-type: none;
             padding: 0;
-            margin: 0;
         }
 
-        ul li {
-            margin-bottom: 10px;
-        }
-
-        ul li a {
-            text-decoration: none;
-            color: #4a90e2;
-            font-size: 1.2em;
-            font-weight: bold;
-            transition: color 0.3s ease;
-        }
-
-        ul li a:hover {
-            color: #357abd;
-        }
-
-        /* SQL-форма */
-        form {
-            margin-top: 20px;
-        }
-
-        label {
-            font-weight: bold;
-            display: block;
-            margin-bottom: 10px;
-        }
-
-        textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            resize: vertical;
-            font-size: 1em;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        button {
-            background-color: #4a90e2;
-            color: #ffffff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1em;
-            transition: background-color 0.3s ease;
-        }
-
-        button:hover {
-            background-color: #357abd;
+        li {
+            margin: 10px 0;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Добро пожаловать на платформу Airbnb!</h1>
-
-        <div class="auth">
-            {% if 'user_id' in session %}
-                <p>Вы вошли как <strong>{{ session['user_name'] }}</strong></p>
-                <a href="{{ url_for('logout') }}">Выйти</a>
-            {% else %}
-                <a href="{{ url_for('login') }}">Войти</a> | 
-                <a href="{{ url_for('register') }}">Регистрация</a>
+        
+        {% if 'user_id' in session %}
+            <p>Вы вошли как {{ session['user_name'] }}</p>
+			<a href="{{ url_for('logout') }}">Выйти</a>
+            
+            {% if session['is_admin'] == True %}
+                <p>Вы вошли как администратор</p>
+                <a href="{{ url_for('execute_query') }}">Перейти к SQL-запросам</a>
             {% endif %}
-        </div>
-
-        <h2>Просмотр таблиц</h2>
-        <ul>
-            <li><a href="{{ url_for('show_table', table_name='users') }}">Пользователи</a></li>
-            <li><a href="{{ url_for('show_table', table_name='rooms') }}">Недвижимость</a></li>
-            <li><a href="{{ url_for('show_table', table_name='reservations') }}">Бронирования</a></li>
-        </ul>
-
-        <h2>Выполнение SQL-запросов</h2>
-        <form method="POST" action="{{ url_for('execute_query') }}">
-            <label for="query">Введите SQL запрос:</label>
-            <textarea id="query" name="query" rows="4"></textarea>
-            <button type="submit">Выполнить</button>
-        </form>
+            
+            <h2>Просмотр таблиц</h2>
+            <ul>
+                <li><a href="{{ url_for('show_table', table_name='users') }}">Пользователи</a></li>
+                <li><a href="{{ url_for('show_table', table_name='rooms') }}">Недвижимость</a></li>
+                <li><a href="{{ url_for('show_table', table_name='reservations') }}">Бронирования</a></li>
+            </ul>
+        {% else %}
+            <a href="{{ url_for('login') }}">Войти</a>
+            <a href="{{ url_for('register') }}">Регистрация</a>
+        {% endif %}
+		
+		{% if 'user_id' not in session %}
+			<h2>Дополнительно</h2>
+			<a href="{{ url_for('admin_login') }}">Вход для администратора</a>
+		{% endif %}
     </div>
 </body>
 </html>

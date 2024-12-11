@@ -7,6 +7,15 @@ CREATE TABLE IF NOT EXISTS users (
     phone_number VARCHAR(20)
 );
 
+CREATE TABLE IF NOT EXISTS admins (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL
+);
+
+INSERT INTO admins (username, password) VALUES ('admin', 'password');
+
+
 -- Таблица rooms
 CREATE TABLE IF NOT EXISTS rooms (
     id SERIAL PRIMARY KEY,
@@ -17,15 +26,15 @@ CREATE TABLE IF NOT EXISTS rooms (
     has_kitchen BOOLEAN,
     has_air_con BOOLEAN,
     price INTEGER,
-    owner_id INTEGER REFERENCES users(id),
+    owner_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     avg_rating INTEGER
 );
 
 -- Таблица reservations
 CREATE TABLE IF NOT EXISTS reservations (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id),
-    room_id INTEGER REFERENCES rooms(id),
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    room_id INTEGER REFERENCES rooms(id) ON DELETE CASCADE,
     start_date TIMESTAMP WITHOUT TIME ZONE,
     end_date TIMESTAMP WITHOUT TIME ZONE,
     price INTEGER,
@@ -35,7 +44,7 @@ CREATE TABLE IF NOT EXISTS reservations (
 -- Таблица reviews
 CREATE TABLE IF NOT EXISTS reviews (
     id SERIAL PRIMARY KEY,
-    reservation_id INTEGER REFERENCES reservations(id),
+    reservation_id INTEGER REFERENCES reservations(id) ON DELETE CASCADE,
     rating INTEGER
 );
 

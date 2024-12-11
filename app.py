@@ -33,6 +33,15 @@ column_translations = {
     'reservation_id': 'ID бронирования', 'rating': 'Оценка'
 }
 
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session or not session.get('is_admin'):
+            flash('Доступ запрещен. Требуются права администратора.', 'danger')
+            return redirect(url_for('home'))
+        return f(*args, **kwargs)
+    return decorated_function
+
 # Защита маршрутов (проверка на авторизацию)
 def login_required(f):
     @wraps(f)
@@ -102,6 +111,35 @@ def login():
 
     return render_template('login.html')
 
+@app.route('/admin/login', methods=['GET', 'POST'])
+def admin_login():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        try:
+            cursor.execute('SELECT * FROM admins WHERE username = %s', (username,))
+            admin = cursor.fetchone()
+            if admin and admin[2] == password:
+                session['user_id'] = admin[0]
+                session['is_admin'] = True
+                session['admin_username'] = username
+                flash('Вы вошли как администратор!')
+                return redirect(url_for('execute_query'))
+            else:
+                flash('Неверное имя пользователя или пароль.')
+        
+        finally:
+            if cursor is not None:
+                cursor.close()
+            if conn is not None:
+                conn.close()
+            
+    return render_template('admin_login.html')
+
 
 # Страница для выхода из системы
 @app.route('/logout')
@@ -112,25 +150,63 @@ def logout():
     return redirect(url_for('home'))
 
 # Страница для отображения таблиц
-@app.route('/table/<table_name>')
+@app.route('/table/<table_name>', methods=['GET', 'POST'])
 @login_required
 def show_table(table_name):
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute(f'SELECT * FROM {table_name}')
+
+    # Обработка поиска по параметру
+    search_query = request.form.get('search_query', '')
+    where_clause = ''
+    if search_query:
+        where_clause = f"WHERE name ILIKE %s"  # Пример поиска по колонке 'name', используйте нужную колонку
+
+    # Выполнение запроса с возможным поиском
+    cursor.execute(f'SELECT * FROM {table_name} {where_clause}', ('%' + search_query + '%',))
     rows = cursor.fetchall()
     columns = [desc[0] for desc in cursor.description]
-    cursor.close()
-    conn.close()
+
+    # Добавление новой записи
+    if request.method == 'POST' and 'add_record' in request.form:
+        # Получаем данные из формы
+        new_data = request.form.get('new_data').split(',')  # В примере данные разделены запятой
+        insert_query = f"INSERT INTO {table_name} ({', '.join(columns)}) VALUES ({', '.join(['%s'] * len(new_data))})"
+        cursor.execute(insert_query, new_data)
+        conn.commit()
+        flash('Запись успешно добавлена!', 'success')
+
+    # Удаление записи
+    # Удаление записи
+    if 'delete_record' in request.form:
+        record_id = request.form.get('record_id')
+
+        # Проверяем, пытается ли пользователь удалить свой собственный аккаунт
+        if table_name == 'users' and int(record_id) == session.get('user_id'):
+            flash('Вы не можете удалить свой собственный аккаунт, пока вы подключены.', 'danger')
+        else:
+            try:
+                conn = get_db_connection()
+                cursor = conn.cursor()
+                cursor.execute(f'DELETE FROM {table_name} WHERE id = %s', (record_id,))
+                conn.commit()
+                flash('Запись успешно удалена!', 'success')
+            except Exception as e:
+                flash(f'Ошибка удаления записи: {e}', 'danger')
+            finally:
+                cursor.close()
+                conn.close()
+
 
     # Переводим названия столбцов
     translated_columns = [column_translations.get(col, col) for col in columns]
 
-    return render_template('show_table.html', rows=rows, columns=translated_columns, table_name=table_name)
+    return render_template('show_table.html', rows=rows, columns=translated_columns, table_name=table_name, search_query=search_query)
+
 
 # Страница для выполнения SQL-запросов
 @app.route('/execute_query', methods=['GET', 'POST'])
-@login_required
+@admin_required
 def execute_query():
     result = None
     columns = []
