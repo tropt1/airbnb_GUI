@@ -1,0 +1,56 @@
+---
+- name: Install dependencies
+  apt:
+    name:
+      - python3
+      - python3-pip
+      - python3-venv
+      - nginx
+      - postgresql
+      - postgresql-contrib
+    state: present
+
+- name: Create app user
+  user:
+    name: "{{ app_user }}"
+    system: yes
+    create_home: yes
+
+- name: Clone repository
+  git:
+    repo: "{{ git_repo }}"
+    dest: "{{ app_dir }}"
+    version: "{{  git_branch }}"
+
+- name: Create virtual enviroment
+  command: "python3 -m venv {{ app_dir}}/venv"
+  args:
+    creates: "{{  app_dir }}/venv/bin/activate"
+
+- name: Install python requirements
+  pip:
+    requirements: "{{ app_dir }}/requirements.txt"
+    virtualenv: "{{ app_dir }}/venv"
+
+- name: Copy Gunicorn service file
+  template:
+    src: "gunicorn.service.j2"
+    dest: "/etc/systemd/system/gunicorn.service"
+
+- name: Copy nginx config
+  template:
+    src: "nginx.conf.j2"
+    dest: "/etc/nginx/sites_available/{{ app_name }}"
+
+- name: Enable nginx site
+  file
+    src: "/etc/nginx/sites-available/{{ app_name }}"
+    dest: "/etc/nginx/sites-enabled/{{ app_name }}"
+    state: link
+  notify: Restart Nginx
+
+- name Start Gunicorn service
+  systemd:
+    name: gunicorn
+    enabled: yes
+    state: started

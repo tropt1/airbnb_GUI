@@ -1,0 +1,5 @@
+- name: Deploy airbnb gui
+  hosts: all
+  become: true
+  roles:
+    - airbnb
