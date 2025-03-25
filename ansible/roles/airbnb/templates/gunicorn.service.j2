@@ -1,0 +1,13 @@
+[Unit]
+Description=Gunicorn for {{ app_name }}
+After=network.target
+
+[Service]
+User={{ app_user }}
+Group=www-data
+WorkingDirectory={{ app_dir }}
+ExecStart={{ app_dir }}/venv/bin/gunicorn --bind 0.0.0.0:{{ flask_port }} app:app
+Restart=always
+
+[Install]
+WantedBy=multy-user.target
