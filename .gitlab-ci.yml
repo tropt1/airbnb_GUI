@@ -1,0 +1,27 @@
+stages:
+  - test
+  - deploy
+
+variables:
+  ANSIBLE_SSH_KEY $SSH_PRIVATE_KEY
+
+test:
+  stage: test
+  image: python:3.9
+  before_script:
+    - pip install -r requirements.txt
+  script:
+    - pytest
+
+deploy_prod:
+  stage: deploy
+  image: python:3.9
+  before_script:
+    - apt-get update -y && apt-get install -y ansible sshpass
+    - mkdir -p ~/.ssh
+    - echo "$ANSIBLE_SSH_KEY" > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+  script:
+    - ansible-playbook -i ansible/inventories/production.yml ansible/playbook.yml
+  only:
+    - main
